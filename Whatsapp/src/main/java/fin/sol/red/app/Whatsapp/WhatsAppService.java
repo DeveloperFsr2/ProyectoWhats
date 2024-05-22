@@ -1,4 +1,4 @@
-/* fin.sol.red.app.Whatsapp;
+package fin.sol.red.app.Whatsapp;/* fin.sol.red.app.Whatsapp;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -32,9 +32,9 @@ import org.springframework.web.client.RestTemplate;
     }
 
 */
+import java.util.UUID;
 
-package fin.sol.red.app.Whatsapp;
-
+import fin.sol.red.app.Whatsapp.WhatsAppModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -70,6 +70,22 @@ public class WhatsAppService {
             e.printStackTrace();
             return "Failed to send message";
         }
+    }
+
+    public String handleAuthentication() {
+        // Generar un UUID único para la autenticación
+        UUID authenticationId = UUID.randomUUID();
+        String authenticationStatus = "authenticated";
+
+        // Aquí puedes manejar la autenticación de WhatsApp
+        // Por ejemplo, puedes almacenar el estado y el ID de autenticación en una base de datos
+        // o realizar alguna otra lógica de negocio
+        // Tu lógica de negocio aquí
+
+        // Ejemplo: Almacenar el estado de autenticación y el ID en una base de datos
+        // Tu lógica de almacenamiento aquí
+
+        return "Authentication status: " + authenticationStatus + ", Authentication ID: " + authenticationId.toString();
     }
 }
 

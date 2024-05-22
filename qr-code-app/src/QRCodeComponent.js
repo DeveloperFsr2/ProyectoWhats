@@ -69,10 +69,10 @@ const QRCodeComponent = () => {
     fetchQRCodeData();
   }, []);
 
-  const sendAuthenticationStatus = async () => {
+  const sendAuthenticationStatus = async (status) => {
     try {
       // Aquí puedes enviar la información de autenticación al backend de Spring Boot
-      await axios.post('http://localhost:8080/whatsapp/authenticated', { authenticated: true });
+      await axios.post('http://localhost:8080/whatsapp/authenticated', { authenticationStatus: status });
       console.log('Authentication status sent successfully');
     } catch (error) {
       console.error('Error sending authentication status:', error);
