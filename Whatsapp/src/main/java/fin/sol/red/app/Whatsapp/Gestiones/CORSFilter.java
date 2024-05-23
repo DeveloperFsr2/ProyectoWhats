@@ -1,4 +1,4 @@
-package fin.sol.red.app.Whatsapp;
+package fin.sol.red.app.Whatsapp.Gestiones;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -268,7 +268,7 @@ app.listen(PORT, () => {
 */
 ////version 4 
 
-const { Client, LocalAuth } = require('whatsapp-web.js');
+/*const { Client, LocalAuth } = require('whatsapp-web.js');
 const express = require('express');
 const qr = require('qrcode');
 const bodyParser = require('body-parser');
@@ -361,7 +361,7 @@ app.listen(PORT, () => {
     console.log(`Servidor Node.js ejecutándose en el puerto ${PORT}`);
 });
 
-
+*/
 //version 5
 /*
 const express = require('express');
@@ -527,3 +527,111 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 */
+//version 7
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const express = require('express');
+const qr = require('qrcode');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const { exec } = require('child_process');
+const path = require('path'); // Asegúrate de importar el módulo path
+
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
+const client = new Client({
+    authStrategy: new LocalAuth({ clientId: "client-one" }), // Asegúrate de que el clientId sea único si tienes múltiples instancias
+    puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-gpu'],
+    },
+    webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html' }
+});
+
+let qrCode = null;
+
+client.on('authenticated', (session) => {
+    console.log('Client has been authenticated!');
+    sendTokenToSpringBoot(session); // Llama a una función para enviar el token JWT al backend de Spring Boot
+});
+
+client.on('auth_failure', msg => {
+    console.error('AUTHENTICATION FAILURE', msg);
+});
+
+client.on('ready', () => {
+    console.log('Client is ready and connected to WhatsApp!');
+});
+
+client.on('qr', code => {
+    qrCode = code;
+    console.log('QR RECEIVED', code);
+});
+
+client.on('disconnected', (reason) => {
+    console.log('Client was logged out', reason);
+    client.initialize(); // Re-initialize the client
+});
+
+client.initialize();
+
+app.post('/send-message', (req, res) => {
+  let { phoneNumber, message } = req.body;
+
+  // Asegúrate de que el número de teléfono esté en el formato E.164
+  phoneNumber = phoneNumber.replace(/\D/g, ''); // Remover caracteres no numéricos
+  if (!phoneNumber.startsWith('593')) { // Reemplaza '593' con el código de tu país si es necesario
+      phoneNumber = `593${phoneNumber}`;
+  }
+
+  client.sendMessage(`${phoneNumber}@c.us`, message)
+      .then(() => {
+          res.send('Message sent successfully!');
+      })
+      .catch((error) => {
+          console.error('Error sending message:', error);
+          res.status(500).send('Failed to send message');
+      });
+});
+
+
+app.get('/qr-code', (req, res) => {
+    if (qrCode) {
+        qr.toDataURL(qrCode, (err, url) => {
+            if (err) {
+                console.error('Error generating QR code:', err);
+                res.status(500).send('Failed to generate QR code');
+            } else {
+                res.send(url);
+            }
+        });
+    } else {
+        res.status(404).send('QR code not available yet');
+    }
+});
+
+app.get('/qr-status', (req, res) => {
+    res.send('ready');
+});
+
+// Función para enviar el token JWT al backend de Spring Boot
+function sendTokenToSpringBoot(session) {
+    const token = jwt.sign({ sessionId: session }, 'finsolred'); // Cambia 'tu_clave_secreta' por tu propia clave secreta
+
+    axios.post('http://localhost:8080/whatsapp/authenticate', { token })
+        .then(response => {
+            console.log('Token enviado exitosamente a Spring Boot:', response.data);
+        })
+        .catch(error => {
+            console.error('Error al enviar el token a Spring Boot:', error);
+        });
+}
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor Node.js ejecutándose en el puerto ${PORT}`);
+});
+

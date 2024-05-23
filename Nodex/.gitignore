@@ -1,0 +1,29 @@
+# Ignorar la carpeta node_modules
+node_modules/
+
+.wwebjs_auth/
+
+
+# Ignorar archivos de configuración específicos para IDEs
+.vscode/
+.idea/
+
+# Ignorar archivos de respaldo y archivos temporales
+*.bak
+*.swp
+*~
+
+# Ignorar archivos de compilación y carpetas generadas
+/dist/
+/build/
+/out/
+/.next/
+/.nuxt/
+
+# Ignorar archivos de dependencias específicos de npm/yarn
+package-lock.json
+yarn.lock
+
+# Ignorar archivos de configuración de entorno local
+.env
+.env.local

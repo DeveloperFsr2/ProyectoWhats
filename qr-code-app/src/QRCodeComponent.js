@@ -89,7 +89,7 @@ const QRCodeComponent = () => {
       ) : qrCodeData ? (
         <>
           <img src={qrCodeData} alt="QR Code" />
-          <button onClick={sendAuthenticationStatus}>Confirm Authentication</button>
+         
         </>
       ) : (
         <p>QR code not available</p>
