@@ -44,6 +44,7 @@ export default QRCodeComponent;
 */
 
 //Version 2
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -98,3 +99,36 @@ const QRCodeComponent = () => {
 };
 
 export default QRCodeComponent;
+
+/*
+//version 3
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const QRCodeComponent = () => {
+  const [qrCodeUrl, setQRCodeUrl] = useState('');
+
+  useEffect(() => {
+    const fetchQRCodeUrl = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/qr-code');
+        setQRCodeUrl(response.data.qrCodeUrl);
+      } catch (error) {
+        console.error('Error fetching QR code URL:', error);
+      }
+    };
+
+    fetchQRCodeUrl();
+  }, []);
+
+  return (
+    <div>
+      {qrCodeUrl && (
+        <img src={qrCodeUrl} alt="QR Code" />
+      )}
+    </div>
+  );
+};
+
+export default QRCodeComponent;
+*/
